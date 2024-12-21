@@ -1,0 +1,43 @@
+services:
+  web:
+    container_name: web
+    build:
+      context: .
+      target: prod # Dockerfileで作成したイメージでコンテナを起動
+    depends_on:
+      - db # dbサービスの起動後、webサービスを起動
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      - PORT=${PORT}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./:/app # ソースコード全体をコンテナの/appにマウント
+    networks:
+      - internal_net # dbサービスとの接続に利用するネットワーク
+      - external_net # 外部との接続に利用するネットワーク
+  
+  db:
+    container_name: db
+    image: mysql:8.4.0
+    restart: always # 停止すると自動的に再起動する
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql # mysql_dataボリュームを、mysqlの保存先ディレクトリにマウント
+    networks:
+      - internal_net
+
+volumes:
+  mysql_data:
+
+networks:
+  internal_net:
+    internal: true # 内部ネットワークとして定義
+  external_net:
