@@ -3,7 +3,7 @@ services:
     container_name: web
     build:
       context: .
-      target: prod # Dockerfileで作成したイメージでコンテナを起動
+      target: ${NODE_ENV} # envファイルで指定したイメージでコンテナを起動。ただし、変更を反映させるには、--buildをつけてビルドから始めること。
     depends_on:
       - db # dbサービスの起動後、webサービスを起動
     ports:
