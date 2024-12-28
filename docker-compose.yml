@@ -1,15 +1,35 @@
 services:
+  web:
+    container_name: web
+    build:
+      context: ./web
+      target: ${NODE_ENV} # envファイルで指定したイメージでコンテナを起動。ただし、変更を反映させるには、--buildをつけてビルドから始めること。
+    depends_on:
+      - api # apiサービスの起動後、webサービスを起動
+    ports:
+      - ${WEB_PORT}:${WEB_PORT}
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - WEB_PORT=${WEB_PORT}
+    volumes:
+      - ./web:/app
+      - web_node_modules:/app/node_modules # 名前付きボリュームとコンテナ側のnode_modulesを同期させる
+    networks:
+      - external_net # 外部との接続に利用するネットワーク
+      - internal_net # apiサービスとの接続に利用するネットワーク
+    
   api:
     container_name: api
     build:
       context: ./api
-      target: ${NODE_ENV} # envファイルで指定したイメージでコンテナを起動。ただし、変更を反映させるには、--buildをつけてビルドから始めること。
+      target: ${NODE_ENV}
     depends_on:
       - db # dbサービスの起動後、apiサービスを起動
     ports:
-      - ${PORT}:${PORT}
+      - ${API_PORT}:${API_PORT}
     environment:
-      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+      - API_PORT=${API_PORT}
       - MYSQL_PORT=${MYSQL_PORT}
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -21,7 +41,6 @@ services:
       - api_node_modules:/app/node_modules
     networks:
       - internal_net # dbサービスとの接続に利用するネットワーク
-      - external_net # 外部との接続に利用するネットワーク
   
   db:
     container_name: db
@@ -42,8 +61,9 @@ services:
       - internal_net
 
 volumes:
-  mysql_data:
+  web_node_modules:
   api_node_modules:
+  mysql_data:
 
 networks:
   internal_net:
