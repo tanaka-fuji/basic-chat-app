@@ -1,7 +1,5 @@
-FROM node:22.3.0 AS base
-
+FROM node:22.3.0-slim AS base
 WORKDIR /app
-
 COPY ["package.json", "package-lock.json", "./"]
 
 FROM base AS test

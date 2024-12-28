@@ -1,11 +1,11 @@
 services:
-  backend:
-    container_name: backend
+  api:
+    container_name: api
     build:
-      context: ./backend
+      context: ./api
       target: ${NODE_ENV} # envファイルで指定したイメージでコンテナを起動。ただし、変更を反映させるには、--buildをつけてビルドから始めること。
     depends_on:
-      - db # dbサービスの起動後、backendサービスを起動
+      - db # dbサービスの起動後、apiサービスを起動
     ports:
       - ${PORT}:${PORT}
     environment:
@@ -17,7 +17,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - ./backend:/app # backendソースコード全体をコンテナの/appにマウント
+      - ./api:/app # apiソースコード全体をコンテナの/appにマウント
     networks:
       - internal_net # dbサービスとの接続に利用するネットワーク
       - external_net # 外部との接続に利用するネットワーク
