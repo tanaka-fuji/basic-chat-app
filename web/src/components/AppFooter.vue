@@ -3,6 +3,8 @@
 
 <template>
   <v-footer app color="primary">
-    <span>&copy; 2024 Chat App</span>
+    <div class="content-area">
+      &copy; 2024 Chat App
+    </div>
   </v-footer>
 </template>
