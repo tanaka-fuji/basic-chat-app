@@ -1,15 +1,15 @@
 import ChatView from '@/views/ChatView.vue'
+import NameView from '@/views/NameView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
-import SigninView from '@/views/SigninView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/signin',
-      name: 'signin',
-      component: SigninView,
+      path: '/name',
+      name: 'name',
+      component: NameView,
     },
     {
       path: '/chat',
@@ -22,5 +22,17 @@ const router = createRouter({
     },
   ],
 })
+
+router.beforeEach((to, from, next) => {
+  const username = localStorage.getItem('username');
+  if (to.name === 'name') {
+    if (username) next({ name: 'chat' });
+    else next();
+  } 
+  else {
+    if (username) next();
+    else next({ name: 'name' })
+  }
+});
 
 export default router
