@@ -4,19 +4,19 @@ services:
     build:
       context: ./web
       target: ${NODE_ENV} # envファイルで指定したイメージでコンテナを起動。ただし、変更を反映させるには、--buildをつけてビルドから始めること。
+      args:
+        - VITE_API_PORT=${API_PORT}
     depends_on:
       - api # apiサービスの起動後、webサービスを起動
     ports:
-      - ${WEB_PORT}:${WEB_PORT}
+      - 80:80
     environment:
-      - NODE_ENV=${NODE_ENV}
-      - WEB_PORT=${WEB_PORT}
+      - VITE_API_PORT=${API_PORT}
     volumes:
       - ./web:/app
       - web_node_modules:/app/node_modules # 名前付きボリュームとコンテナ側のnode_modulesを同期させる
     networks:
       - external_net # 外部との接続に利用するネットワーク
-      - internal_net # apiサービスとの接続に利用するネットワーク
     
   api:
     container_name: api
@@ -40,6 +40,7 @@ services:
       - ./api:/app # apiソースコード全体をコンテナの/appにマウント
       - api_node_modules:/app/node_modules
     networks:
+      - external_net
       - internal_net # dbサービスとの接続に利用するネットワーク
   
   db:

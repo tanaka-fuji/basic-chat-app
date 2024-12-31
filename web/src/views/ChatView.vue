@@ -1,11 +1,46 @@
 <script setup>
+import Messages from '@/components/Messages.vue';
+import Topics from '@/components/Topics.vue';
+import axios from 'axios';
+import { provide } from 'vue';
+
+const API_ORIGIN = `${location.protocol}//${location.hostname}:${import.meta.env.VITE_API_PORT}`;
+
+const httpClient = axios.create({
+  baseURL: `${API_ORIGIN}/api`,
+  timeout: 1000,
+  // headers: {
+  //   'Content-Type': 'application/json',
+  // }
+});
+
+httpClient.interceptors.response.use(
+  response => response,
+  error => {
+    switch (error.status) {
+      case 500:
+        alert('サーバー内部エラーが発生しました。時間を空けて再度アクセスしてください。');
+        break;
+    
+      default:
+        alert('予期せぬエラーが発生しました。時間を空けて再度アクセスしてください。')
+        break;
+    }
+    return error;
+  }
+)
+
+provide('httpClient', httpClient);
+
 </script>
 
 <template>
   <v-row>
     <v-col cols="4">
+      <Topics />
     </v-col>
     <v-col cols="8">
+      <Messages />
     </v-col>
   </v-row>
 </template>

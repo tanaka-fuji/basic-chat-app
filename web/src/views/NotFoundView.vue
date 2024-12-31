@@ -4,7 +4,7 @@
 <template>
   <div>
     <h1>404 - Page Not Found</h1>
-    <p>The page you are looking for does not exist.</p>
-    <router-link to="/">Go Back to Home</router-link>
+    <p>アクセスしようとしたページは見つかりませんでした。</p>
+    <router-link to="/chat">ホーム画面に戻る</router-link>
   </div>
 </template>
