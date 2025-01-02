@@ -2,7 +2,7 @@
 import Messages from '@/components/Messages.vue';
 import Topics from '@/components/Topics.vue';
 import axios from 'axios';
-import { provide } from 'vue';
+import { provide, reactive } from 'vue';
 
 const API_ORIGIN = `${location.protocol}//${location.hostname}:${import.meta.env.VITE_API_PORT}`;
 
@@ -18,10 +18,15 @@ httpClient.interceptors.response.use(
   response => response,
   error => {
     switch (error.status) {
+      case 400:
+        alert(error.response.data.errors[0].msg); //サーバー側で定義したバリデーションエラーメッセージを表示
+        break;
+      case 404:
+        alert('アクセスしようとしたページが見つかりません。');
+        break;
       case 500:
         alert('サーバー内部エラーが発生しました。時間を空けて再度アクセスしてください。');
         break;
-    
       default:
         alert('予期せぬエラーが発生しました。時間を空けて再度アクセスしてください。')
         break;
@@ -31,6 +36,7 @@ httpClient.interceptors.response.use(
 )
 
 provide('httpClient', httpClient);
+provide('conversation', reactive({}));
 
 </script>
 
