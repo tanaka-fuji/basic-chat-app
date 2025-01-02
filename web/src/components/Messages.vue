@@ -11,7 +11,7 @@ const username = localStorage.getItem('username');
 <template>
   <div class="overflow-auto p-4 bg-amber-lighten-5" v-if="conversation.isVisible" style="height: 80vh;border-radius: 10px;">
     <div class="pa-4 bg-grey-darken-3" style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
-      [icon]メッセージ数: {{ conversation.msgCount }}
+      {{ conversation.topicName }} （{{ conversation.msgCount }} messages）
     </div>
     <!-- topicDescをトグルで表示するようにする -->
     <div class="ma-3">{{ conversation.topicDesc }}</div>
@@ -27,14 +27,13 @@ const username = localStorage.getItem('username');
         </v-card>
     </div>
   </div>
-  a
 </template>
 
 <style scoped>
 .my-message {
   padding-top: 7px;
   border-radius: 12px;
-  background: #9ef6c6;
+  background: #9ecef6;
   border: 0.1px solid black;
 }
 

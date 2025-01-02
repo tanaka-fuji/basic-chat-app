@@ -1,5 +1,5 @@
 <script setup>
-import { inject, onBeforeMount, ref } from 'vue';
+import { inject, onBeforeMount, reactive, ref } from 'vue';
 
 const httpClient = inject('httpClient');
 const conversation = inject('conversation');
@@ -9,12 +9,21 @@ const topics = ref([]);
 
 const selectedCardId = ref(0);
 
+//localStorageをリアクティブにできないため、リアクティブな変数にコピーする
+const storageData = reactive({});
+Object.keys(localStorage).forEach(key => {
+  storageData[key] = localStorage.getItem(key);
+});
+
 onBeforeMount(async () => {
   try {
     const res = await httpClient.get('/topics');
     if (res.status === 200) {
       topicCount.value = res.data.count;
       topics.value = res.data.rows;
+      topics.value.forEach(topic => {
+        topic.last_sent_at = new Date(topic.last_sent_at).getTime();
+      });
     }
   } catch (error) {
     console.error(error);
@@ -40,6 +49,9 @@ const fetchMessages = async (topic) => {
         });
       });
       conversation.isVisible = true;
+      const currnetTime = new Date().getTime();
+      localStorage.setItem(topic.id, currnetTime);
+      storageData[topic.id] = currnetTime;
     }
   } catch (error) {
     console.error(error);
@@ -50,12 +62,12 @@ const fetchMessages = async (topic) => {
 
 <template>
   <div class="overflow-auto mx-4 bg-grey-lighten-3" style="height: 80vh;border-radius: 10px;">
-    <div class="pa-4 bg-grey-darken-3" style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
-      トピック数: {{ topicCount }}
+    <div class="pa-4 bg-light-blue-darken-3" style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
+      {{ topicCount }} Topics
     </div>
     <v-card
       class="ma-2"
-      :class="selectedCardId === topic.id ? 'selected-card': ''"
+      :class="[selectedCardId === topic.id ? 'selected-card': '', storageData[topic.id] && storageData[topic.id] > topic.last_sent_at ? '' : 'bg-white']"
       height="100"
       elevation="1"
       variant="outlined"
@@ -71,6 +83,6 @@ const fetchMessages = async (topic) => {
 
 <style scoped>
 .selected-card {
-  background-color: rgb(200, 200, 200);
+  background-color: rgb(170, 170, 170);
 }
 </style>
