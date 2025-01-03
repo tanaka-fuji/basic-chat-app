@@ -7,6 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('api:server');
 var http = require('http');
+var { Server } = require('socket.io');
+var registerEvents = require('../socket_events');
+var cors = require('cors');
 
 /**
  * Get port from environment and store in Express.
@@ -16,10 +19,30 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
+ * Enable CORS for express
+ */
+
+const corsOptions = {
+  origin: 'http://localhost',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
+}
+
+app.use(cors(corsOptions));
+
+/**
  * Create HTTP server.
  */
 
 var server = http.createServer(app);
+
+/**
+ * Create io server and enable CORS for socket.io
+ */
+var io = new Server(server, {
+  cors: corsOptions
+});
+registerEvents(io);
 
 /**
  * Listen on provided port, on all network interfaces.
