@@ -36,10 +36,40 @@ onMounted(() => {
 });
 
 const registerSocketEvent = () => {
-  socketClient.on('addTopicEvent', (topic) => {
+  socketClient.on('createTopicEvent', (topic) => {
     topic.last_sent_at = new Date(topic.last_sent_at).getTime();
     topics.value.unshift(topic);
-  })
+    topicCount.value += 1;
+  });
+  socketClient.on('updateTopicEvent', (topic) => {
+    topics.value.forEach(t => {
+      if (t.id === topic.id) {
+        t.name = topic.name;
+        t.description = topic.description;
+        t.updatedAt = topic.updatedAt;
+      }
+    });
+    if (conversation.topicId === topic.id) {
+      conversation.topicName = topic.name;
+      conversation.topicDesc = topic.description;
+    }
+  });
+  socketClient.on('deleteTopicEvent', (topicId) => {
+    topics.value = topics.value.filter(topic => topic.id !== topicId);
+    topicCount.value -= 1;
+    if (conversation.topicId === topicId) {
+      Object.keys(conversation).forEach(key => {
+        delete conversation[key];
+      });
+    }
+  });
+  socketClient.on('deleteAllTopicEvent', () => {
+    topics.value = [];
+    topicCount.value = 0;
+    Object.keys(conversation).forEach(key => {
+      delete conversation[key];
+    });
+  });
 }
 
 const fetchMessages = async (topic) => {
@@ -77,10 +107,16 @@ const fetchMessages = async (topic) => {
     <div class="pa-4 d-flex justify-space-between bg-light-blue-darken-3"
       style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
       <span>{{ topicCount }} Topics</span>
-      <v-btn icon class="bg-grey-darken-3" size="x-small"
-        @click="topicDialog.isOpen = true; topicDialog.mode = 'create'">
-        <v-icon icon="mdi-message-plus" />
-      </v-btn>
+      <span>
+        <v-btn icon class="bg-grey-darken-3" size="x-small"
+          @click="topicDialog.isOpen = true; topicDialog.mode = 'create'">
+          <v-icon icon="mdi-message-plus" />
+        </v-btn>
+        <v-btn icon class="bg-red ms-3" size="x-small"
+          @click="topicDialog.isOpen = true; topicDialog.mode = 'deleteAll'">
+          <v-icon icon="mdi-delete-sweep-outline" />
+        </v-btn>
+      </span>
     </div>
     <v-card class="ma-2"
       :class="[selectedCardId === topic.id ? 'selected-card' : '', storageData[topic.id] && storageData[topic.id] > topic.last_sent_at ? '' : 'bg-white']"

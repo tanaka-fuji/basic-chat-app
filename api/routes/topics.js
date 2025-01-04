@@ -51,7 +51,7 @@ router.post('/', topicValidator, async function(req, res, next) {
       description: req.body.description,
       last_sent_at: new Date()
     });
-    req.app.get('io').sockets.emit('addTopicEvent', topic);
+    req.app.get('io').sockets.emit('createTopicEvent', topic);
     res.status(201).json(topic);
   } catch (error) {
     console.error(error);
@@ -75,6 +75,7 @@ router.put('/:id', topicIdValidator, topicValidator, async function(req, res, ne
     topic.name = req.body.name;
     topic.description = req.body.description;
     topic.save();
+    req.app.get('io').sockets.emit('updateTopicEvent', topic);
     res.status(200).json(topic);
   } catch (error) {
     console.error(error);
@@ -88,6 +89,7 @@ router.delete('/', async function(req, res, next) {
     await db.Topics.destroy({
       where: {},
     });
+    req.app.get('io').sockets.emit('deleteAllTopicEvent', {});
     res.status(204).json();
   } catch (error) {
     console.error(error);
@@ -109,6 +111,7 @@ router.delete('/:id', topicIdValidator, async function(req, res, next) {
       return res.status(404).json({'error': 'Not Found'});
     }
     topic.destroy();
+    req.app.get('io').sockets.emit('deleteTopicEvent', topic.id);
     res.status(204).json();
   } catch (error) {
     console.error(error);

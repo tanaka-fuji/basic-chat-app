@@ -1,6 +1,7 @@
 <script setup>
 import { inject, provide } from 'vue';
 import CreateCard from './dialogs/topic/CreateCard.vue';
+import DeleteAllCard from './dialogs/topic/DeleteAllCard.vue';
 import DeleteCard from './dialogs/topic/DeleteCard.vue';
 import UpdateCard from './dialogs/topic/UpdateCard.vue';
 
@@ -33,5 +34,6 @@ provide('topicDescRules', topicDescRules);
     <CreateCard v-if="topicDialog.mode === 'create'" />
     <UpdateCard v-else-if="topicDialog.mode === 'update'" />
     <DeleteCard v-else-if="topicDialog.mode === 'delete'" />
+    <DeleteAllCard v-else-if="topicDialog.mode === 'deleteAll'" />
   </v-dialog>
 </template>
