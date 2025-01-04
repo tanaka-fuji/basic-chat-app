@@ -1,10 +1,10 @@
 <script setup>
-import Dialog from '@/components/Dialog.vue';
 import Messages from '@/components/Messages.vue';
+import TopicDialog from '@/components/TopicDialog.vue';
 import Topics from '@/components/Topics.vue';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-import { provide, reactive, ref } from 'vue';
+import { provide, reactive } from 'vue';
 
 const API_ORIGIN = `${location.protocol}//${location.hostname}:${import.meta.env.VITE_API_PORT}`;
 
@@ -41,9 +41,7 @@ httpClient.interceptors.response.use(
 
 provide('httpClient', httpClient);
 provide('conversation', reactive({}));
-provide('dialog', reactive({ isOpen: false }));
-provide('topicCount', ref(0));
-provide('topics', ref([]));
+provide('topicDialog', reactive({ isOpen: false }));
 
 </script>
 
@@ -54,7 +52,7 @@ provide('topics', ref([]));
     </v-col>
     <v-col cols="8">
       <Messages />
-      <Dialog />
     </v-col>
   </v-row>
+  <TopicDialog />
 </template>

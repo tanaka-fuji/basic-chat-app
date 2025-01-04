@@ -3,10 +3,9 @@ import { inject, onBeforeMount, reactive, ref } from 'vue';
 
 const httpClient = inject('httpClient');
 const conversation = inject('conversation');
-const dialog = inject('dialog');
-
-const topicCount = inject('topicCount');
-const topics = inject('topics')
+const topicDialog = inject('topicDialog');
+const topicCount = ref(0);
+const topics = ref([]);
 
 const selectedCardId = ref(0);
 
@@ -66,7 +65,8 @@ const fetchMessages = async (topic) => {
     <div class="pa-4 d-flex justify-space-between bg-light-blue-darken-3"
       style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
       <span>{{ topicCount }} Topics</span>
-      <v-btn icon class="bg-grey-darken-3" size="x-small" @click="dialog.isOpen = true; dialog.mode = 'createTopic'">
+      <v-btn icon class="bg-grey-darken-3" size="x-small"
+        @click="topicDialog.isOpen = true; topicDialog.mode = 'create'">
         <v-icon icon="mdi-message-plus" />
       </v-btn>
     </div>
