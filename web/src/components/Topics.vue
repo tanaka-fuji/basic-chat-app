@@ -125,6 +125,9 @@ const fetchMessages = async (topic) => {
       <v-card-item>
         <v-card-title>{{ topic.name }}</v-card-title>
         <v-card-subtitle>{{ topic.description }}</v-card-subtitle>
+        <div class="d-flex justify-end" v-if="!(storageData[topic.id] && storageData[topic.id] > topic.last_sent_at)">
+          <v-icon icon="mdi-bell-ring-outline" color="info" />
+        </div>
       </v-card-item>
     </v-card>
   </div>
