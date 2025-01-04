@@ -1,17 +1,21 @@
 <script setup>
+import Dialog from '@/components/Dialog.vue';
 import Messages from '@/components/Messages.vue';
 import Topics from '@/components/Topics.vue';
 import axios from 'axios';
-import { provide, reactive } from 'vue';
+import { io } from 'socket.io-client';
+import { provide, reactive, ref } from 'vue';
 
 const API_ORIGIN = `${location.protocol}//${location.hostname}:${import.meta.env.VITE_API_PORT}`;
+
+const socketClient = io(API_ORIGIN);
 
 const httpClient = axios.create({
   baseURL: `${API_ORIGIN}/api`,
   timeout: 1000,
-  // headers: {
-  //   'Content-Type': 'application/json',
-  // }
+  headers: {
+    'Content-Type': 'application/json',
+  }
 });
 
 httpClient.interceptors.response.use(
@@ -37,6 +41,9 @@ httpClient.interceptors.response.use(
 
 provide('httpClient', httpClient);
 provide('conversation', reactive({}));
+provide('dialog', reactive({ isOpen: false }));
+provide('topicCount', ref(0));
+provide('topics', ref([]));
 
 </script>
 
@@ -47,6 +54,7 @@ provide('conversation', reactive({}));
     </v-col>
     <v-col cols="8">
       <Messages />
+      <Dialog />
     </v-col>
   </v-row>
 </template>

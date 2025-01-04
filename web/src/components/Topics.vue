@@ -3,9 +3,10 @@ import { inject, onBeforeMount, reactive, ref } from 'vue';
 
 const httpClient = inject('httpClient');
 const conversation = inject('conversation');
+const dialog = inject('dialog');
 
-const topicCount = ref(0);
-const topics = ref([]);
+const topicCount = inject('topicCount');
+const topics = inject('topics')
 
 const selectedCardId = ref(0);
 
@@ -62,17 +63,17 @@ const fetchMessages = async (topic) => {
 
 <template>
   <div class="overflow-auto mx-4 bg-grey-lighten-3" style="height: 80vh;border-radius: 10px;">
-    <div class="pa-4 bg-light-blue-darken-3" style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
-      {{ topicCount }} Topics
+    <div class="pa-4 d-flex justify-space-between bg-light-blue-darken-3"
+      style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
+      <span>{{ topicCount }} Topics</span>
+      <v-btn icon class="bg-grey-darken-3" size="x-small" @click="dialog.isOpen = true; dialog.mode = 'createTopic'">
+        <v-icon icon="mdi-message-plus" />
+      </v-btn>
     </div>
-    <v-card
-      class="ma-2"
-      :class="[selectedCardId === topic.id ? 'selected-card': '', storageData[topic.id] && storageData[topic.id] > topic.last_sent_at ? '' : 'bg-white']"
-      height="100"
-      elevation="1"
-      variant="outlined"
-      @click="fetchMessages(topic); selectedCardId=topic.id"
-      v-for="(topic,i) in topics" :key="i">
+    <v-card class="ma-2"
+      :class="[selectedCardId === topic.id ? 'selected-card' : '', storageData[topic.id] && storageData[topic.id] > topic.last_sent_at ? '' : 'bg-white']"
+      height="100" elevation="1" variant="outlined" @click="fetchMessages(topic); selectedCardId = topic.id"
+      v-for="(topic, i) in topics" :key="i">
       <v-card-item>
         <v-card-title>{{ topic.name }}</v-card-title>
         <v-card-subtitle>{{ topic.description }}</v-card-subtitle>
