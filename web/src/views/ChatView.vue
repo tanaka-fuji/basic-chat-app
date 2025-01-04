@@ -39,6 +39,7 @@ httpClient.interceptors.response.use(
   }
 )
 
+provide('socketClient', socketClient);
 provide('httpClient', httpClient);
 provide('conversation', reactive({}));
 provide('topicDialog', reactive({ isOpen: false }));

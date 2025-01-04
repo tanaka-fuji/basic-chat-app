@@ -48,8 +48,10 @@ router.post('/', topicValidator, async function(req, res, next) {
   try {
     const topic = await db.Topics.create({
       name: req.body.name,
-      description: req.body.description
+      description: req.body.description,
+      last_sent_at: new Date()
     });
+    req.app.get('io').sockets.emit('addTopicEvent', topic);
     res.status(201).json(topic);
   } catch (error) {
     console.error(error);

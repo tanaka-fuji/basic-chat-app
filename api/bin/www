@@ -31,6 +31,7 @@ var io = new Server(server, {
   cors: CORS_OPTIONS
 });
 registerEvents(io);
+app.set('io', io);
 
 /**
  * Listen on provided port, on all network interfaces.

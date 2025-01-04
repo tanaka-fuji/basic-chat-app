@@ -1,6 +1,7 @@
 <script setup>
-import { inject, onBeforeMount, reactive, ref } from 'vue';
+import { inject, onBeforeMount, onMounted, reactive, ref } from 'vue';
 
+const socketClient = inject('socketClient');
 const httpClient = inject('httpClient');
 const conversation = inject('conversation');
 const topicDialog = inject('topicDialog');
@@ -29,6 +30,17 @@ onBeforeMount(async () => {
     console.error(error);
   }
 });
+
+onMounted(() => {
+  registerSocketEvent();
+});
+
+const registerSocketEvent = () => {
+  socketClient.on('addTopicEvent', (topic) => {
+    topic.last_sent_at = new Date(topic.last_sent_at).getTime();
+    topics.value.unshift(topic);
+  })
+}
 
 const fetchMessages = async (topic) => {
   try {
