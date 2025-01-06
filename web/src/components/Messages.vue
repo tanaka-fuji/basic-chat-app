@@ -12,14 +12,15 @@ const text = ref('');
 
 const textRules = [
   (value) => {
-    if (1 <= value.length && value.length <= 100) {
+    if (1 <= value.trim().length && value.trim().length <= 100) {
       return true;
     }
     return "メッセージ本文は、1文字以上100文字以内で入力してください。";
   }
 ];
 
-const createMessage = async () => {
+const createMessage = async (e) => {
+  e.preventDefault(); // shift + Enterキーで入力された場合、改行を無効にする
   const validResult = await createMsgForm.value.validate();
   if (!validResult.valid) {
     return;
@@ -30,7 +31,9 @@ const createMessage = async () => {
       username: localStorage.getItem('username')
     });
     if (res.status === 201) {
-      createMsgForm.value.reset();
+      text.value = '';
+      await nextTick();
+      createMsgForm.value.resetValidation();
     }
   } catch (error) {
     console.log(error);
@@ -40,7 +43,9 @@ const createMessage = async () => {
 watch(conversation, async () => {
   await nextTick();
   const area = document.getElementById('messages-area');
-  area.scrollTop = area.scrollHeight;
+  if (area) {
+    area.scrollTop = area.scrollHeight;
+  }
 });
 
 </script>
@@ -80,7 +85,7 @@ watch(conversation, async () => {
           <span>{{ msg.username }}</span>
           <span>{{ msg.createdAt }}</span>
         </v-card-subtitle>
-        <v-card-text class="text-body-1">
+        <v-card-text class="text-body-1 text-pre-wrap">
           {{ msg.text }}
         </v-card-text>
       </v-card>
@@ -88,7 +93,7 @@ watch(conversation, async () => {
     <div class="pt-4 bg-amber-lighten-5" style="position: sticky; bottom: 0; z-index: 1;  border-radius: 10px;">
       <v-form ref="createMsgForm" @submit.prevent="createMessage" class="d-flex">
         <v-textarea v-model="text" :rules="textRules" class="ps-4" prepend-icon="mdi-comment" maxlength="100" rows="1"
-          variant="outlined" auto-grow counter></v-textarea>
+          variant="outlined" auto-grow counter @keydown.enter.shift="createMessage"></v-textarea>
         <v-btn type="submit" class="me-5 ma-3" color="success">
           <v-icon icon="mdi-send-variant" />
         </v-btn>

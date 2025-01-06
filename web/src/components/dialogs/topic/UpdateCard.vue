@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref } from 'vue';
+import { inject, nextTick, ref } from 'vue';
 
 const httpClient = inject('httpClient');
 const topicDialog = inject('topicDialog');
@@ -23,7 +23,10 @@ const updateTopic = async () => {
     });
     if (res.status === 200) {
       topicDialog.isOpen = false;
-      updateTopicForm.value.reset();
+      topicName.value = '';
+      topicDesc.value = '';
+      await nextTick();
+      updateTopicForm.value.resetValidation();
     }
   } catch (error) {
     console.error(error);
