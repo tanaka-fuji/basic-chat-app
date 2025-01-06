@@ -52,6 +52,7 @@ router.post('/:id/messages',topicIdValidator, messageValidator, async function(r
     });
     topic.last_sent_at = message.dataValues.createdAt;
     topic.save();
+    req.app.get('io').sockets.emit('createMessageEvent', message);
     res.status(201).json(message);
   } catch (error) {
     console.error(error);

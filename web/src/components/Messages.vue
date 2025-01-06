@@ -1,10 +1,36 @@
 <script setup>
-import { inject } from 'vue';
+import { inject, ref } from 'vue';
 
+const httpClient = inject('httpClient');
 const conversation = inject('conversation');
 const topicDialog = inject('topicDialog');
 
 const username = localStorage.getItem('username');
+
+const text = ref('');
+
+const textRules = [
+  (value) => {
+    if (1 <= value.length && value.length <= 100) {
+      return true;
+    }
+    return "メッセージ本文は、1文字以上100文字以内で入力してください。";
+  }
+];
+
+const createMessage = async () => {
+  try {
+    const res = await httpClient.post(`topics/${conversation.topicId}/messages`, {
+      text: text.value,
+      username: localStorage.getItem('username')
+    });
+    if (res.status === 201) {
+      text.value = '';
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 </script>
 
@@ -38,6 +64,15 @@ const username = localStorage.getItem('username');
           {{ msg.text }}
         </v-card-text>
       </v-card>
+    </div>
+    <div style="position: sticky; top: 80vh; z-index: 1;  border-radius: 10px;">
+      <v-form @submit.prevent="" class="d-flex">
+        <v-textarea v-model="text" :rules="textRules" class="ps-4" prepend-icon="mdi-comment" maxlength="100" rows="1"
+          variant="outlined" auto-grow counter></v-textarea>
+        <v-btn type="submit" class="me-5 ma-3" color="success" @click="createMessage">
+          <v-icon icon="mdi-send-variant" />
+        </v-btn>
+      </v-form>
     </div>
   </div>
 </template>

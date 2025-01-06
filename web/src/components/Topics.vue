@@ -70,6 +70,19 @@ const registerSocketEvent = () => {
       delete conversation[key];
     });
   });
+  socketClient.on('createMessageEvent', (message) => {
+    topics.value.forEach(topic => {
+      if (topic.id === message.topic_id) {
+        topic.last_sent_at = new Date(message.createdAt).getTime();
+      }
+    });
+    if (conversation.topicId === message.topic_id) {
+      const currnetTime = new Date().getTime();
+      localStorage.setItem(conversation.topicId, currnetTime);
+      storageData[conversation.topicId] = currnetTime;
+      conversation.messages.push(message);
+    }
+  });
 }
 
 const fetchMessages = async (topic) => {
