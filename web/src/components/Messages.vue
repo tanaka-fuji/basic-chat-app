@@ -46,25 +46,34 @@ watch(conversation, async () => {
 </script>
 
 <template>
-  <div id="messages-area" class="overflow-auto p-4 bg-amber-lighten-5" v-if="conversation.isVisible"
+  <div id="messages-area" class="overflow-auto bg-amber-lighten-5" v-if="conversation.isVisible"
     style="height: 80vh;border-radius: 10px;">
-    <div class="pa-4 bg-grey-darken-3" style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
-      <div class="d-flex justify-space-between">
-        <span>{{ conversation.topicName }} （{{ conversation.msgCount }} messages）</span>
-        <span>
-          <v-btn icon class="bg-amber-lighten-5" size="x-small"
-            @click="topicDialog.isOpen = true; topicDialog.mode = 'update';">
-            <v-icon icon="mdi-square-edit-outline" />
-          </v-btn>
-          <v-btn icon class="ms-3 bg-amber-lighten-5" size="x-small"
-            @click="topicDialog.isOpen = true; topicDialog.mode = 'delete';">
-            <v-icon icon="mdi-trash-can-outline" color="red" />
-          </v-btn>
-        </span>
-      </div>
-    </div>
-    <!-- topicDescをトグルで表示するようにする -->
-    <div class="ma-3">{{ conversation.topicDesc }}</div>
+    <!-- トピック名と説明文、ダイアログ表示用ボタン -->
+    <v-expansion-panels class="mb-1" style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
+      <v-expansion-panel bg-color="white">
+        <v-expansion-panel-title class="pb-5" color="grey-darken-3">
+          {{ conversation.topicName }} （{{ conversation.msgCount }} messages）
+        </v-expansion-panel-title>
+        <v-expansion-panel-text style="border: 1px solid gray;">
+          <v-row>
+            <v-col cols="9" class="mt-1">
+              {{ conversation.topicDesc }}
+            </v-col>
+            <v-col cols="3" class="d-flex justify-end">
+              <v-btn icon class="bg-amber-lighten-5" size="x-small"
+                @click="topicDialog.isOpen = true; topicDialog.mode = 'update';">
+                <v-icon icon="mdi-square-edit-outline" />
+              </v-btn>
+              <v-btn icon class="ms-3 bg-amber-lighten-5" size="x-small"
+                @click="topicDialog.isOpen = true; topicDialog.mode = 'delete';">
+                <v-icon icon="mdi-trash-can-outline" color="red" />
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+    <!-- メッセージ一覧 -->
     <div class="ma-3" v-for="(msg, i) in conversation.messages" :key="i">
       <v-card :class="username === msg.username ? 'my-message' : 'other-message'" elevation="5">
         <v-card-subtitle class="d-flex justify-space-between">
