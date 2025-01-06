@@ -6,10 +6,15 @@ const topicDialog = inject('topicDialog');
 const topicNameRules = inject('topicNameRules');
 const topicDescRules = inject('topicDescRules');
 
+const createTopicForm = ref({});
 const topicName = ref('');
 const topicDesc = ref('');
 
 const createTopic = async () => {
+  const validResult = await createTopicForm.value.validate();
+  if (!validResult.valid) {
+    return;
+  }
   try {
     const res = await httpClient.post('/topics', {
       name: topicName.value,
@@ -17,8 +22,7 @@ const createTopic = async () => {
     });
     if (res.status === 201) {
       topicDialog.isOpen = false;
-      topicName.value = '';
-      topicDesc.value = '';
+      createTopicForm.value.reset();
     }
   } catch (error) {
     console.error(error);
@@ -29,7 +33,7 @@ const createTopic = async () => {
 
 <template>
   <v-card prepend-icon="mdi-message-plus-outline" title="トピックを作成する">
-    <v-form @submit.prevent="createTopic">
+    <v-form ref="createTopicForm" @submit.prevent="createTopic">
       <v-card-item>
         <v-card-text>
           <v-text-field type="text" label="トピック名（1文字〜10文字）" :rules="topicNameRules" v-model.trim="topicName">

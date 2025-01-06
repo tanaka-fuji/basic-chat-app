@@ -7,10 +7,15 @@ const topicNameRules = inject('topicNameRules');
 const topicDescRules = inject('topicDescRules');
 const conversation = inject('conversation');
 
+const updateTopicForm = ref({});
 const topicName = ref(conversation.topicName);
 const topicDesc = ref(conversation.topicDesc);
 
 const updateTopic = async () => {
+  const validResult = await updateTopicForm.value.validate();
+  if (!validResult.valid) {
+    return;
+  }
   try {
     const res = await httpClient.put(`topics/${conversation.topicId}`, {
       name: topicName.value,
@@ -18,8 +23,7 @@ const updateTopic = async () => {
     });
     if (res.status === 200) {
       topicDialog.isOpen = false;
-      topicName.value = '';
-      topicDesc.value = '';
+      updateTopicForm.value.reset();
     }
   } catch (error) {
     console.error(error);
@@ -30,7 +34,7 @@ const updateTopic = async () => {
 
 <template>
   <v-card prepend-icon="mdi-square-edit-outline" title="トピックを編集する">
-    <v-form @submit.prevent="updateTopic">
+    <v-form ref="updateTopicForm" @submit.prevent="updateTopic">
       <v-card-item>
         <v-card-text>
           <v-text-field type="text" label="トピック名（1文字〜10文字）" :rules="topicNameRules" v-model.trim="topicName">

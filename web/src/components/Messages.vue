@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref } from 'vue';
+import { inject, nextTick, ref, watch } from 'vue';
 
 const httpClient = inject('httpClient');
 const conversation = inject('conversation');
@@ -7,6 +7,7 @@ const topicDialog = inject('topicDialog');
 
 const username = localStorage.getItem('username');
 
+const createMsgForm = ref({});
 const text = ref('');
 
 const textRules = [
@@ -19,23 +20,33 @@ const textRules = [
 ];
 
 const createMessage = async () => {
+  const validResult = await createMsgForm.value.validate();
+  if (!validResult.valid) {
+    return;
+  }
   try {
     const res = await httpClient.post(`topics/${conversation.topicId}/messages`, {
       text: text.value,
       username: localStorage.getItem('username')
     });
     if (res.status === 201) {
-      text.value = '';
+      createMsgForm.value.reset();
     }
   } catch (error) {
     console.log(error);
   }
 };
 
+watch(conversation, async () => {
+  await nextTick();
+  const area = document.getElementById('messages-area');
+  area.scrollTop = area.scrollHeight;
+});
+
 </script>
 
 <template>
-  <div class="overflow-auto p-4 bg-amber-lighten-5" v-if="conversation.isVisible"
+  <div id="messages-area" class="overflow-auto p-4 bg-amber-lighten-5" v-if="conversation.isVisible"
     style="height: 80vh;border-radius: 10px;">
     <div class="pa-4 bg-grey-darken-3" style="position: sticky; top: 0; z-index: 1;border-radius: 10px;">
       <div class="d-flex justify-space-between">
@@ -65,8 +76,8 @@ const createMessage = async () => {
         </v-card-text>
       </v-card>
     </div>
-    <div style="position: sticky; top: 80vh; z-index: 1;  border-radius: 10px;">
-      <v-form @submit.prevent="createMessage" class="d-flex">
+    <div class="pt-4 bg-amber-lighten-5" style="position: sticky; bottom: 0; z-index: 1;  border-radius: 10px;">
+      <v-form ref="createMsgForm" @submit.prevent="createMessage" class="d-flex">
         <v-textarea v-model="text" :rules="textRules" class="ps-4" prepend-icon="mdi-comment" maxlength="100" rows="1"
           variant="outlined" auto-grow counter></v-textarea>
         <v-btn type="submit" class="me-5 ma-3" color="success">
