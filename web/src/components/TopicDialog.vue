@@ -21,7 +21,7 @@ const topicDescRules = [
     if (value.length <= 100) {
       return true;
     }
-    return "説明文は、100文字以内で入力してください。";
+    return "トピック説明文は、100文字以内で入力してください。";
   }
 ];
 

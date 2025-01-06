@@ -43,7 +43,7 @@ router.get('/:id', topicIdValidator, async function(req, res, next) {
 router.post('/', topicValidator, async function(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({'error': errors.array()});
+    return res.status(400).json({'errors': errors.array()});
   }
   try {
     const topic = await db.Topics.create({
@@ -63,7 +63,7 @@ router.post('/', topicValidator, async function(req, res, next) {
 router.put('/:id', topicIdValidator, topicValidator, async function(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({'error': errors.array()});
+    return res.status(400).json({'errors': errors.array()});
   }
   try {
     const topic = await db.Topics.findOne({

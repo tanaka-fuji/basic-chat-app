@@ -29,22 +29,22 @@ const createTopic = async () => {
 
 <template>
   <v-card prepend-icon="mdi-message-plus-outline" title="トピックを作成する">
-    <v-card-item>
-      <v-card-text>
-        <v-form @submit.prevent="">
+    <v-form @submit.prevent="createTopic">
+      <v-card-item>
+        <v-card-text>
           <v-text-field type="text" label="トピック名（1文字〜10文字）" :rules="topicNameRules" v-model.trim="topicName">
           </v-text-field>
           <v-text-field class="mt-8" type="text" label="説明文（0文字〜100文字）" :rules="topicDescRules"
             v-model.trim="topicDesc">
           </v-text-field>
-        </v-form>
-      </v-card-text>
-    </v-card-item>
-    <template v-slot:actions>
-      <v-btn class="ms-auto" text="戻る" @click="topicDialog.isOpen = false">
-      </v-btn>
-      <v-btn class="me-auto bg-primary" text="作成" @click="createTopic">
-      </v-btn>
-    </template>
+        </v-card-text>
+      </v-card-item>
+      <div class="d-flex mb-5">
+        <v-btn class="ms-auto" text="戻る" @click="topicDialog.isOpen = false">
+        </v-btn>
+        <v-btn class="ms-5 me-auto bg-primary" type="submit" text="作成">
+        </v-btn>
+      </div>
+    </v-form>
   </v-card>
 </template>

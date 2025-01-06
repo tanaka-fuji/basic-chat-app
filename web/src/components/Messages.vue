@@ -66,10 +66,10 @@ const createMessage = async () => {
       </v-card>
     </div>
     <div style="position: sticky; top: 80vh; z-index: 1;  border-radius: 10px;">
-      <v-form @submit.prevent="" class="d-flex">
+      <v-form @submit.prevent="createMessage" class="d-flex">
         <v-textarea v-model="text" :rules="textRules" class="ps-4" prepend-icon="mdi-comment" maxlength="100" rows="1"
           variant="outlined" auto-grow counter></v-textarea>
-        <v-btn type="submit" class="me-5 ma-3" color="success" @click="createMessage">
+        <v-btn type="submit" class="me-5 ma-3" color="success">
           <v-icon icon="mdi-send-variant" />
         </v-btn>
       </v-form>
