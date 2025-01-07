@@ -35,6 +35,16 @@ onMounted(() => {
   registerSocketEvent();
 });
 
+const toJST = (date) => {
+  return new Date(date).toLocaleString("ja", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "narrow"
+  });
+}
+
 const registerSocketEvent = () => {
   socketClient.on('createTopicEvent', (topic) => {
     topic.last_sent_at = new Date(topic.last_sent_at).getTime();
@@ -80,6 +90,7 @@ const registerSocketEvent = () => {
       const currnetTime = new Date().getTime();
       localStorage.setItem(conversation.topicId, currnetTime);
       storageData[conversation.topicId] = currnetTime;
+      message.createdAt = toJST(message.createdAt);
       conversation.messages.push(message);
     }
   });
@@ -95,13 +106,7 @@ const fetchMessages = async (topic) => {
       conversation.msgCount = res.data.count;
       conversation.messages = res.data.rows;
       conversation.messages.forEach(msg => {
-        msg.createdAt = new Date(msg.createdAt).toLocaleString("ja", {
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          weekday: "narrow"
-        });
+        msg.createdAt = toJST(msg.createdAt);
       });
       conversation.isVisible = true;
       const currnetTime = new Date().getTime();
