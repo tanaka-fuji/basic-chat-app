@@ -6,6 +6,9 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  optimizeDeps: {
+    include: ['esm-dep > cjs-dep'],
+  },
   plugins: [
     vue(),
     vueDevTools(),
