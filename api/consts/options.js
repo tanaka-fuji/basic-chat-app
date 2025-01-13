@@ -1,6 +1,6 @@
 module.exports = {
   CORS_OPTIONS : {
-    origin: 'http://localhost',
+    origin: process.env.API_ORIGIN,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
   }
