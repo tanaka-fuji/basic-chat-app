@@ -92,6 +92,7 @@ const registerSocketEvent = () => {
       storageData[conversation.topicId] = currnetTime;
       message.createdAt = toJST(message.createdAt);
       conversation.messages.push(message);
+      conversation.msgCount += 1;
     }
   });
 }
